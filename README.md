@@ -1,4 +1,4 @@
-# show-your-idea
+# show-your-choice
 
 ## Project setup
 ```
