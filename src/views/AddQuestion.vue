@@ -29,19 +29,20 @@
                         @focus="showButtons"
                         :key="index"
                         :data-index="index"
-                        :ref="`answer${index}`"
-                        style="margin-bottom: 20px;">
+                        style="margin-bottom: 20px;"
+                        :ref="`answer${index}`">
                         <i
                           class="el-icon-error el-input__icon"
                           slot="suffix"
-                          @click="showButtons"
-                          style="cursor: pointer;">
+                          style="cursor: pointer;"
+                          @click="showButtons">
                         </i>
                         <i
                           class="el-icon-delete el-input__icon"
                           slot="suffix"
-                          @click="deleteAnswer"
-                          style="cursor: pointer;" :data-delete-index="index" v-if="index === 0 ? false : true">
+                          style="cursor: pointer;"
+                          v-if="index === 0 ? false : true"
+                          @click="deleteAnswer">
                         </i>
                       </el-input>
                   </el-form-item>
@@ -84,7 +85,8 @@ export default {
     return {
       titleA: '',
       titleB: '',
-      answers: [0]
+      answers: [0],
+      showButton: false
     }
   },
   created() {
@@ -93,8 +95,8 @@ export default {
   methods : {
     enterAndGo(e) {
       const input = e.currentTarget;
-      let index = parseFloat(input.children[0].dataset.index);
-      const next = index + 1;
+      const index = parseFloat(input.children[0].dataset.index);
+      const next = parseFloat(index) + 1;
       const hasNextValue = this.answers.indexOf(next);
 
       if (hasNextValue >= 0) {
@@ -106,17 +108,19 @@ export default {
           // after element is created...
           const nextInput = this.$refs[`answer${next}`][0].$el.children[0]; 
           nextInput.focus();
-        }.bind(this), 1000)
+        }.bind(this), 100)
       }
+    },
+    showButtons() {
+      this.showButton = true;
     },
     deleteAnswer(e) {
       const icon = e.currentTarget;
       const inputDiv = icon.offsetParent.offsetParent;
       const input = inputDiv.children[0];
       const index = input.dataset.index;
-      input.style.display = 'none'
-
-      this.answers.splice(this.answers.indexOf(index), 1);
+      inputDiv.style.display = 'none'
+      delete this.answers[index];
     }
   }
 }
