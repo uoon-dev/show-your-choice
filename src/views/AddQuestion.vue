@@ -1,58 +1,80 @@
 <template>
   <div data-type="add/question">
-    <form data-type="add/content">
-      <fieldset>
-        <legend data-title> 질문을 등록해주세요! </legend>
-        <p data-title-questions>
-          <label>질문</label><br>
-          <input type="text" v-model="titleA" name="question-title-a" v-on:keydown.enter="enterAndGo">
-          vs
-          <input type="text" v-model="titleB" name="question-title-b" v-on:keydown.enter="enterAndGo">
-        </p>
-        <p data-answers>
-          <label for="answer">답변</label>              
-          <input  
-            type="text" 
-            v-for="(answer, index) in answers" 
-            v-on:keydown.enter="enterAndGo"
-            :key="index"
-            :data-input="index">
-        </p>
-      </fieldset>
-    </form>
+    <el-row :gutter="20">
+      <el-col :span="12" :offset="6">
+        <el-form data-type="add/content">
+          <fieldset data-type="add/area">
+            <legend data-header><h1>질문 등록하기</h1></legend>
+            <p data-title-questions>
+              <el-row :gutter="20">
+                <el-col :span="14" :offset="5">
+                  <el-form-item data-title>
+                    <h2>질문</h2>
+                    <el-input type="text" v-model="titleA" name="question-title-a" clearable autofocus></el-input>
+                      <h2>vs</h2>
+                    <el-input type="text" v-model="titleB" name="question-title-b" clearable></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </p>
+            <p data-answers>
+              <el-row :gutter="20">
+                <el-col :span="14" :offset="5">
+                  <el-form-item data-title>
+                    <h2>답변</h2>
+                      <el-input
+                        type="text" 
+                        v-for="(answer, index) in answers" 
+                        @keydown.enter.native="enterAndGo"
+                        @focus="showButtons"
+                        :key="index"
+                        :data-index="index"
+                        :ref="`answer${index}`"
+                        style="margin-bottom: 20px;">
+                        <i
+                          class="el-icon-error el-input__icon"
+                          slot="suffix"
+                          @click="showButtons"
+                          style="cursor: pointer;">
+                        </i>
+                        <i
+                          class="el-icon-delete el-input__icon"
+                          slot="suffix"
+                          @click="deleteAnswer"
+                          style="cursor: pointer;" :data-delete-index="index" v-if="index === 0 ? false : true">
+                        </i>
+                      </el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </p>
+          </fieldset>
+        </el-form>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <style lang="scss" scoped>
   [data-type^="add"] {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
   }
 
   [data-type$="question"] {
-    [data-type$="content"] {
-      align-items: center;
-      flex: 1;
+    padding-bottom: 100px;
+    [data-title] {}
 
-      fieldset {
-        width: 70%;
-
-        [data-title-questions] {
-          display: flex;
-          flex-direction: column;
-          align-content: space-around;
-        }
-      }
-    }
+    [data-type$="content"] {}
   }
 
-  fieldset {
+  [data-type$="area"] {
+    border: 1px solid gainsboro;
+
     [data-title-questions] {
       input[type="text"] {
         align-self: center;
-        width: 70%;
       }
     }
+
+    [data-answers] {}
   }
 
 </style>
@@ -70,14 +92,31 @@ export default {
   },
   methods : {
     enterAndGo(e) {
-      // const index = e.currentTarget.dataset.index;
-      const parentAttr = e.currentTarget.parentElement.dataset;
-      const sibling = e.currentTarget.nextElementSibling;
-      if (parentAttr.hasOwnProperty('answers')) {
-        this.answers.push('');
+      const input = e.currentTarget;
+      let index = parseFloat(input.children[0].dataset.index);
+      const next = index + 1;
+      const hasNextValue = this.answers.indexOf(next);
+
+      if (hasNextValue >= 0) {
+        const nextInput = this.$refs[`answer${next}`][0].$el.children[0]; 
+        nextInput.focus();
       } else {
-        sibling.focus();
+        this.answers.push(next);
+        setTimeout(function() {
+          // after element is created...
+          const nextInput = this.$refs[`answer${next}`][0].$el.children[0]; 
+          nextInput.focus();
+        }.bind(this), 1000)
       }
+    },
+    deleteAnswer(e) {
+      const icon = e.currentTarget;
+      const inputDiv = icon.offsetParent.offsetParent;
+      const input = inputDiv.children[0];
+      const index = input.dataset.index;
+      input.style.display = 'none'
+
+      this.answers.splice(this.answers.indexOf(index), 1);
     }
   }
 }
