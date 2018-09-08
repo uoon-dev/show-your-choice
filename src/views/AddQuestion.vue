@@ -2,125 +2,113 @@
   <div data-type="add/question">
     <el-row :gutter="20">
       <el-col :span="12" :offset="6">
-        <el-form data-type="add/content">
-          <fieldset data-type="add/area">
-            <legend data-header><h1>질문 등록하기</h1></legend>
-            <p data-title-questions>
-              <el-row :gutter="20">
-                <el-col :span="14" :offset="5">
-                  <el-form-item data-title>
-                    <h2>질문</h2>
-                    <el-input type="text" v-model="titleA" name="question-title-a" clearable autofocus></el-input>
-                      <h2>vs</h2>
-                    <el-input type="text" v-model="titleB" name="question-title-b" clearable></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </p>
-            <p data-answers>
-              <el-row :gutter="20">
-                <el-col :span="14" :offset="5">
-                  <el-form-item data-title>
-                    <h2>답변</h2>
-                      <el-input
-                        type="text" 
-                        v-for="(answer, index) in answers" 
-                        @keydown.enter.native="enterAndGo"
-                        @focus="showButtons"
-                        :key="index"
-                        :data-index="index"
-                        style="margin-bottom: 20px;"
-                        :ref="`answer${index}`">
-                        <i
-                          class="el-icon-error el-input__icon"
-                          slot="suffix"
-                          style="cursor: pointer;"
-                          @click="showButtons">
-                        </i>
-                        <i
-                          class="el-icon-delete el-input__icon"
-                          slot="suffix"
-                          style="cursor: pointer;"
-                          v-if="index === 0 ? false : true"
-                          @click="deleteAnswer">
-                        </i>
-                      </el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </p>
-          </fieldset>
-        </el-form>
+      <el-form data-type="add/form">
+        <fieldset>
+          <legend data-header><h1>질문 등록하기</h1></legend>        
+          <p data-save>
+            <el-row>
+              <el-col :span="5" :offset="19">
+                <el-button type="primary" @click="saveQuestion()">등록하기</el-button>
+              </el-col>
+            </el-row>
+          </p>
+          <question-list v-for="(question, id) in questions" 
+            :key="id" 
+            :questionID="id" 
+            @updateTitle="onChangeTitle"
+            @updateOptions="onChangeOptions"></question-list>
+          <p data-increase>
+            <el-row>
+              <el-col :span="14" :offset="5">
+                <el-button type="primary" @click="increaseQuestion(index++)">질문 추가하기</el-button>
+              </el-col>
+            </el-row>
+          </p>
+        </fieldset>
+      </el-form>        
       </el-col>
     </el-row>
   </div>
 </template>
 <style lang="scss" scoped>
-  [data-type^="add"] {
-  }
-
   [data-type$="question"] {
     padding-bottom: 100px;
-    [data-title] {}
+    [data-type$="form"] {
+      fieldset {
+        border: 1px solid gainsboro;
 
-    [data-type$="content"] {}
-  }
-
-  [data-type$="area"] {
-    border: 1px solid gainsboro;
-
-    [data-title-questions] {
-      input[type="text"] {
-        align-self: center;
+        [data-save] {
+          margin-bottom: 0;
+        }
       }
     }
-
-    [data-answers] {}
   }
+
 
 </style>
 <script>
+import QuestionList from '../components/QuestionList.vue';
+
 export default {
   data() {
     return {
-      titleA: '',
-      titleB: '',
-      answers: [0],
-      showButton: false
+      questions: [0],
+      result: {
+        choices: []
+      }
     }
+  },
+  components: {
+    QuestionList
   },
   created() {
     
   },
   methods : {
-    enterAndGo(e) {
-      const input = e.currentTarget;
-      const index = parseFloat(input.children[0].dataset.index);
-      const next = parseFloat(index) + 1;
-      const hasNextValue = this.answers.indexOf(next);
-
-      if (hasNextValue >= 0) {
-        const nextInput = this.$refs[`answer${next}`][0].$el.children[0]; 
-        nextInput.focus();
-      } else {
-        this.answers.push(next);
-        setTimeout(function() {
-          // after element is created...
-          const nextInput = this.$refs[`answer${next}`][0].$el.children[0]; 
-          nextInput.focus();
-        }.bind(this), 100)
-      }
+    increaseQuestion(index) {
+      this.questions.push(index);
     },
-    showButtons() {
-      this.showButton = true;
+    saveQuestion() {
+      console.log(e);
+      // const question = {
+      //   title: this.titleA,
+      //   options: [],
+      //   imgs: []
+      // };
+      // const data = {
+      //   choices: [
+      //     {
+      //       choiceIndex: 0,
+      //       title: this.titleA,
+      //       options: [
+      //         "한달에 한번 보급선 왕복",
+      //         "인터넷은 되지만 느림 위성전화 사용 가능",
+      //         "집안 청결상태는 어느 정도 유지",
+      //         "나머지는 개인시간",
+      //         "1년 휴가 한달 가능",
+      //         "3년간 고용보장"
+      //       ],
+      //       imgs: [
+      //         "http://cfile272.uf.daum.net/image/2306E94C57EFAD5736C40A"
+      //       ]
+      //     },
+      //     {
+      //     choiceIndex: 1,
+      //       title: this.titleB,
+      //       "options": [],
+      //       "imgs": []
+      //     }
+      //   ],
+      //   result: [
+      //     123,
+      //     456
+      //   ]
+      // };
     },
-    deleteAnswer(e) {
-      const icon = e.currentTarget;
-      const inputDiv = icon.offsetParent.offsetParent;
-      const input = inputDiv.children[0];
-      const index = input.dataset.index;
-      inputDiv.style.display = 'none'
-      delete this.answers[index];
+    onChangeTitle(title) {
+    },
+    onChangeOptions(options) {
+      console.log(options);
     }
   }
 }
