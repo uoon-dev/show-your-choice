@@ -71,6 +71,7 @@ export default {
     },
     async saveQuestion() {
       await api().put('questions.json', this.result);
+      this.$router.push('items');
     },
     onChangeTitle(question) {
       this.updateQuestion(question);
