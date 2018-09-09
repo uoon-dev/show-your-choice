@@ -47,6 +47,7 @@
 
 </style>
 <script>
+import api from '../services/api';
 import QuestionList from '../components/QuestionList.vue';
 
 export default {
@@ -68,47 +69,18 @@ export default {
     increaseQuestion(index) {
       this.questions.push(index);
     },
-    saveQuestion() {
-      console.log(e);
-      // const question = {
-      //   title: this.titleA,
-      //   options: [],
-      //   imgs: []
-      // };
-      // const data = {
-      //   choices: [
-      //     {
-      //       choiceIndex: 0,
-      //       title: this.titleA,
-      //       options: [
-      //         "한달에 한번 보급선 왕복",
-      //         "인터넷은 되지만 느림 위성전화 사용 가능",
-      //         "집안 청결상태는 어느 정도 유지",
-      //         "나머지는 개인시간",
-      //         "1년 휴가 한달 가능",
-      //         "3년간 고용보장"
-      //       ],
-      //       imgs: [
-      //         "http://cfile272.uf.daum.net/image/2306E94C57EFAD5736C40A"
-      //       ]
-      //     },
-      //     {
-      //     choiceIndex: 1,
-      //       title: this.titleB,
-      //       "options": [],
-      //       "imgs": []
-      //     }
-      //   ],
-      //   result: [
-      //     123,
-      //     456
-      //   ]
-      // };
+    async saveQuestion() {
+      await api().put('questions.json', this.result);
     },
-    onChangeTitle(title) {
+    onChangeTitle(question) {
+      this.updateQuestion(question);
     },
-    onChangeOptions(options) {
-      console.log(options);
+    onChangeOptions(question) {
+      this.updateQuestion(question);
+    },
+    updateQuestion(question) {
+      this.result.choices.filter((choice) => choice.index !== question.choiceIndex).push(question);
+      this.result.choices[question.choiceIndex] = question;
     }
   }
 }

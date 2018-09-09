@@ -7,7 +7,7 @@
             <h2 :class="{marginOff : this.questionID === 0}">질문</h2>
             <el-input 
               type="text" 
-              v-model="title" 
+              v-model="question.title" 
               @keyup.native="updateQuestionTitle"
               clearable 
               autofocus>
@@ -74,8 +74,11 @@ export default {
   },
   data() {
     return {
-      title: '',
-      options: {},
+      question: {
+        choiceIndex: this.questionID,
+        title: '',
+        options: []
+      },
       optionCount: [0],
       optionContent: {}
     }
@@ -112,12 +115,12 @@ export default {
       debugger;
     },
     updateQuestionTitle() {
-      this.$emit('updateTitle', this.title);
+      this.$emit('updateTitle', this.question);
     },
     updateOptionContent(index) {
       // console.log(this.optionContent, index)
-      this.options[index] = this.optionContent[index];
-      this.$emit('updateOptions', this.options);
+      this.question.options[index] = this.optionContent[index];
+      this.$emit('updateOptions', this.question);
     },
     showOptions() {
       debugger;
