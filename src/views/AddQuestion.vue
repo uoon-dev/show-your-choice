@@ -52,16 +52,14 @@ export default {
   components: {
     QuestionList
   },
-  created() {
-    
-  },
   methods : {
     increaseQuestion(index) {
       this.questions.push(index);
     },
     async saveQuestion() {
-      await api().put('questions.json', this.result);
-      this.$router.push('items');
+      debugger;
+      await api().post('', this.result);
+      // this.$router.push('items');
     },
     onChangeTitle(question) {
       this.updateQuestion(question);
@@ -70,7 +68,7 @@ export default {
       this.updateQuestion(question);
     },
     updateQuestion(question) {
-      this.result.choices.filter((choice) => choice.index !== question.choiceIndex).push(question);
+      // this.result.choices.some((choice) => choice.index !== question.choiceIndex);
       this.result.choices[question.choiceIndex] = question;
     }
   }

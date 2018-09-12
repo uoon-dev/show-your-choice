@@ -6,6 +6,6 @@ Vue.use(VueAxios, axios)
 
 export default () => {
   return axios.create({
-    baseURL: `https://show-your-choice.firebaseio.com/`
+    baseURL: `https://api.balancegame.io/qst/questions/`
   })
 }

@@ -93,10 +93,10 @@ export default {
     return {
       question: {
         choiceIndex: this.questionID,
-        header: this.header,
         title: '',
         options: [],
       },
+      header: this.header,
       optionContent: {},
       optionData: ''
     }
@@ -112,7 +112,6 @@ export default {
       return function(option) {
         const optionLength = this.optionData.options.length;
         const targetIndex = this.optionData.options.indexOf(option);
-        console.log(option);
         return optionLength - 1 === targetIndex;
       }
     }
