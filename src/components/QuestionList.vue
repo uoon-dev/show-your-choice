@@ -1,129 +1,160 @@
 <template>
-  <div data-type="add/content">
-    <p data-title-questions>
-      <el-row :gutter="20">
-        <el-col :span="14" :offset="5">
-          <el-form-item data-title>
-            <h2 :class="{marginOff : this.questionID === 0}">질문</h2>
-            <el-input 
-              type="text" 
-              v-model="question.title" 
-              @keyup.native="updateQuestionTitle"
-              clearable 
-              autofocus>
-            </el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </p>
-    <p data-options>
-      <el-row :gutter="20">
-        <el-col :span="10" :offset="7">
-          <el-form-item data-title>
-            <h2 @click="showOptions">옵션</h2>
-              <el-input
+  <span data-type="add/content">
+    <el-col :span="10" :offset="1">
+      <p data-title-questions>
+        <el-row :gutter="20">
+          <el-col :span="16" :offset="5">
+            <el-form-item data-title>
+              <h2>{{ header }}</h2>
+              <el-input 
                 type="text" 
-                v-for="(option, index) in optionCount" 
-                v-model="optionContent[index]"
-                @keyup.native="updateOptionContent(index)"
-                @keydown.enter.native="enterAndGo"
-                :key="index"
-                :data-index="index"
-                style="margin-bottom: 10px;"
-                :ref="`option-${questionID}-${index}`">
-                <i
-                  class="el-icon-error el-input__icon"
-                  slot="suffix"
-                  style="cursor: pointer;">
-                </i>
-                <i
-                  class="el-icon-delete el-input__icon"
-                  slot="suffix"
-                  style="cursor: pointer;"
-                  v-if="index === 0 ? false : true"
-                  @click="deleteAnswer">
-                </i>
+                v-model="question.title" 
+                @keyup.native="updateQuestionTitle"
+                clearable 
+                autofocus>
               </el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>              
-    </p>
-    <hr class="border-gray"/>
-  </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </p>
+      <p data-options>
+        <el-row :gutter="20">
+          <el-col :span="12" :offset="7">
+            <el-form-item data-title>
+              <h3>+ 옵션</h3>
+                <el-input
+                  type="text" 
+                  v-for="(option, index) in optionData.options" 
+                  v-model="option.text"
+                  @keydown.enter.native="enterAndGo"
+                  @keyup.native="updateOptionContent(option, index)"
+                  :class="{rightPadding: index !== 0}"
+                  :key="index"
+                  :data-index="index"
+                  style="margin-bottom: 10px;">
+                  <i
+                    class="el-icon-error el-input__icon"
+                    slot="suffix"
+                    style="cursor: pointer;"
+                    @click="clearText($event, option)">
+                  </i>
+                  <i
+                    class="el-icon-delete el-input__icon"
+                    slot="suffix"
+                    style="cursor: pointer;"
+                    v-if="index === 0 ? false : true"
+                    @click="deleteOption(option)">
+                  </i>
+                  <template slot="append" v-if="showAddButton(option)">
+                    <el-button type="primary" icon="el-icon-circle-plus" circle @click="enterAndGo"></el-button>
+                  </template>
+                </el-input>                
+            </el-form-item>
+          </el-col>
+        </el-row>              
+      </p>
+    </el-col>
+    <el-col :span="1" v-if="this.questionID === 0">
+      <p data-versus><strong>VS</strong></p>
+    </el-col>
+  </span>
 </template>
 <style lang="scss" scoped>
-  .marginOff {
-    margin-top: -4px;
-  }
-
-  [data-title-questions] {
-    margin-top: 0;
-    margin-bottom: -15px;
+  [data-versus] {
+    position: absolute;
+    top: 20vh;
+    left: 50%;
+    transform: translateX(-50%)
   }
 
   .border-gray {
     border: 1px solid gainsboro;
   }
+
+  .rightPadding {
+    .el-input__inner {
+      border: 5px solid red;
+      padding-right: 60px;
+    }
+  }
 </style>
 <script>
+
 export default {
   props: {
     questionID: {
       type: Number
+    },
+    header: {
+      type: String
     }
   },
   data() {
     return {
       question: {
         choiceIndex: this.questionID,
+        header: this.header,
         title: '',
-        options: []
+        options: [],
       },
-      optionCount: [0],
-      optionContent: {}
+      optionContent: {},
+      optionData: ''
+    }
+  },
+  created() {
+    const data = {
+      options: [{text:''}]
+    }
+    this.optionData = {...data};
+  },
+  computed: {
+    showAddButton() {
+      return function(option) {
+        const optionLength = this.optionData.options.length;
+        const targetIndex = this.optionData.options.indexOf(option);
+        console.log(option);
+        return optionLength - 1 === targetIndex;
+      }
     }
   },
   methods : {
     enterAndGo(e) {
-      const input = e.currentTarget;
-      const index = parseFloat(input.children[0].dataset.index);
-      const next = parseFloat(index) + 1;
-      const hasNextValue = this.optionCount.indexOf(next);
+      let input;
+      e.currentTarget.nodeName === 'BUTTON' ? 
+        input = e.currentTarget.parentElement.parentElement :
+        input = e.currentTarget;
 
-      if (hasNextValue >= 0) {
-        const nextInput = this.$refs[`option-${this.questionID}-${next}`][0].$el.children[0]; 
+      const inputIndex = input.children[0].dataset.index;
+      
+      if (input.nextSibling.nodeName === 'DIV') {
+        const nextInput = input.nextSibling.children[0]; 
         nextInput.focus();
       } else {
-        this.optionCount.push(next);
+        this.optionData.options.push({text:''});
+
+        // after element is created...
         setTimeout(function() {
-          // after element is created...
-          const nextInput = this.$refs[`option-${this.questionID}-${next}`][0].$el.children[0]; 
+          const nextInput = input.nextSibling.children[0];
+          nextInput.style.paddingRight = '60px';
           nextInput.focus();
         }.bind(this), 100)
       }
-    },    
-    deleteAnswer(e) {
-      const icon = e.currentTarget;
-      const inputDiv = icon.offsetParent.offsetParent;
-      const input = inputDiv.children[0];
-      const index = input.dataset.index;
-      inputDiv.style.display = 'none'
-      delete this.optionCount[index];
     },
-    saveTitle() {
-      this.$store.dispatch('setTitle', this.title);
-      debugger;
+    clearText(e, option) {
+      const input = e.currentTarget.offsetParent.previousElementSibling;
+      option.text = '';
+      input.focus();
+    },
+    deleteOption(targetOption) {
+      const targetIndex = this.optionData.options.indexOf(targetOption);
+      this.$delete(this.optionData.options, targetIndex);
     },
     updateQuestionTitle() {
       this.$emit('updateTitle', this.question);
     },
-    updateOptionContent(index) {
-      // console.log(this.optionContent, index)
-      this.question.options[index] = this.optionContent[index];
+    updateOptionContent(option, index) {
+      this.question.options[index] = option.text;
       this.$emit('updateOptions', this.question);
-    },
-    showOptions() {
-      debugger;
     }
    }
 }

@@ -1,33 +1,23 @@
 <template>
   <div data-type="add/question">
-    <el-row :gutter="20">
-      <el-col :span="12" :offset="6">
       <el-form data-type="add/form">
-        <fieldset>
-          <legend data-header><h1>질문 등록하기</h1></legend>        
-          <p data-save>
-            <el-row>
-              <el-col :span="5" :offset="19">
-                <el-button type="primary" @click="saveQuestion()">등록하기</el-button>
-              </el-col>
-            </el-row>
-          </p>
-          <question-list v-for="(question, id) in questions" 
+        <legend data-header><h1>질문 등록하기</h1></legend>        
+        <el-row>
+          <question-list v-for="(header, id) in headers" 
             :key="id" 
             :questionID="id" 
+            :header="header"
             @updateTitle="onChangeTitle"
             @updateOptions="onChangeOptions"></question-list>
-          <p data-increase>
-            <el-row>
-              <el-col :span="14" :offset="5">
-                <el-button type="primary" @click="increaseQuestion(index++)">질문 추가하기</el-button>
-              </el-col>
-            </el-row>
-          </p>
-        </fieldset>
+        </el-row>
+        <p data-save>
+          <el-row>
+            <el-col :span="14" :offset="5">
+              <el-button type="primary" @click="saveQuestion()">등록하기</el-button>
+            </el-col>
+          </el-row>
+        </p>
       </el-form>        
-      </el-col>
-    </el-row>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -53,7 +43,7 @@ import QuestionList from '../components/QuestionList.vue';
 export default {
   data() {
     return {
-      questions: [0],
+      headers: ['이거랑', '이거'],
       result: {
         choices: []
       }
