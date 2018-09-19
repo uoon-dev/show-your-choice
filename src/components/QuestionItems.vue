@@ -11,10 +11,15 @@
       <p data-options>
         <el-row :gutter="20">
           <el-col :span="12" :offset="7">
-            <!-- <h3 v-if="choices.options.length > 0">+ 옵션</h3> -->
-            <el-checkbox-group v-model="optionCheckList" size="medium">
-              <el-checkbox v-for="option in choices.options" :label="option" :key="option" border>{{option}}</el-checkbox>
-            </el-checkbox-group>
+            <div v-for="(option, index) in choices.options" :key="option">
+              <p-check 
+                class="p-icon p-image p-curve p-tada p-plain" 
+                v-model="choices.checkOptions[index]">
+                <img slot="extra" class="image" src="../assets/logo.png" style="width: 15px;">
+                <!-- <i slot="extra" class="icon mdi mdi-weather-night"></i> -->
+                {{option}}
+              </p-check>
+            </div>
           </el-col>
         </el-row>              
       </p>
@@ -27,8 +32,8 @@
 <style lang="scss" scoped>
   [data-options] {
     margin-top: 40px;
-    // h3 { margin-bottom: 40px; }
   }
+
   [data-versus] {
     position: absolute;
     top: 47vh;
@@ -43,35 +48,9 @@
     transform: translateX(-50%)
   }
 
-  .border-gray {
-    border: 1px solid gainsboro;
-  }
-
-  .rightPadding {
-    .el-input__inner {
-      border: 5px solid red;
-      padding-right: 60px;
-    }
-  }
-
-  .el-checkbox-button {
-    display: block;
-    margin-bottom: 20px;
-
-    .el-checkbox-button__inner {
-      border: 1px solid gainsboro;
-      border-radius: 5px;
-    }
-  }
-
-  .el-checkbox.is-bordered.el-checkbox--medium {
+  .pretty {
+    margin-bottom: 25px;
     float: left;
-    margin-bottom: 20px;
-    padding: 12px 20px 25px 10px;
-
-    &:nth-child(1) {
-      margin-left: 10px;
-    }
   }
 </style>
 <script>
@@ -84,7 +63,10 @@
     data() {
       return {
         optionCheckList: [],
-        choices: this.question
+        choices: { 
+            ...this.question,
+            checkOptions: []
+          }
       }
     },
     created() {
