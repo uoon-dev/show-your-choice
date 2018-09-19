@@ -79,7 +79,6 @@
   }
 </style>
 <script>
-
 export default {
   props: {
     questionID: {

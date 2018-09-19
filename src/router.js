@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
-import AddQuestion from './views/AddQuestion.vue';
+import AdminQuestion from './views/AdminQuestion.vue';
 
 Vue.use(Router);
 
@@ -13,11 +13,14 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
+      beforeEnter: (to, from, next) => {
+        next('/question/admin')
+      }
     },
     {
-      path: '/question/add',
-      name: 'addQuestion',
-      component: AddQuestion
+      path: '/question/admin',
+      name: 'adminQuestion',
+      component: AdminQuestion
     },
     {
       path: '/question/show',

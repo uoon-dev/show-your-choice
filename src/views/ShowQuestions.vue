@@ -1,6 +1,6 @@
 <template>
   <div data-type="show/question">
-    <h1>{{ getTitle }}</h1>
+    <question-items v-for="(choice, id) in data.choices" :key="id" :question="choice"></question-items>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -8,18 +8,24 @@
 </style>
 <script>
 import api from '../services/api';
+import QuestionItems from '../components/QuestionItems.vue';
 
 export default {
   data() {
     return {
       title: '',
-      questions: []
+      data: {
+        choices: []
+      }
     }
+  },
+  components: {
+    QuestionItems
   },
   created() {
     this.getQuestionItems()
       .then(response => {
-        this.questions = response.data.choices;
+        this.data = response.data.data;
       })
   },
   computed: {
@@ -31,7 +37,7 @@ export default {
   },
   methods: {
     async getQuestionItems() {
-      return await api().get('1e5cf100-b670-11e8-b935-b7809ca142ae');
+      return await api().get('70f4e710-1f65-4c17-b26d-be011bc6407d');
     }
   }
 }

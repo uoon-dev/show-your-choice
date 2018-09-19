@@ -3,12 +3,12 @@
       <el-form data-type="add/form">
         <legend data-header><h1>질문 등록하기</h1></legend>        
         <el-row>
-          <question-list v-for="(header, id) in headers" 
+          <add-question-items v-for="(header, id) in headers" 
             :key="id" 
             :questionID="id" 
             :header="header"
             @updateTitle="onChangeTitle"
-            @updateOptions="onChangeOptions"></question-list>
+            @updateOptions="onChangeOptions"></add-question-items>
         </el-row>
         <p data-save>
           <el-row>
@@ -38,8 +38,7 @@
 </style>
 <script>
 import api from '../services/api';
-import QuestionList from '../components/QuestionList.vue';
-
+import AddQuestionItems from '../components/AddQuestionItems.vue';
 export default {
   data() {
     return {
@@ -50,7 +49,7 @@ export default {
     }
   },
   components: {
-    QuestionList
+    AddQuestionItems
   },
   methods : {
     increaseQuestion(index) {
