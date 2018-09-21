@@ -1,13 +1,13 @@
 <template>
   <div data-type="show/question">
-    <question-items v-for="(choice, id) in data.choices" :key="id" :question="choice"></question-items>
+    <show-question-items v-for="(choice, id) in data.choices" :key="id" :question="choice"></show-question-items>
   </div>
 </template>
 <style lang="scss" scoped>
 </style>
 <script>
 import api from '../services/api';
-import QuestionItems from '../components/QuestionItems.vue';
+import ShowQuestionItems from '../components/ShowQuestionItems.vue';
 
 export default {
   data() {
@@ -19,7 +19,7 @@ export default {
     }
   },
   components: {
-    QuestionItems
+    ShowQuestionItems
   },
   created() {
     this.getQuestionItems()
