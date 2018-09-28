@@ -24,23 +24,10 @@
                 @keydown.enter="enterAndGo"
                 @keyup="updateOptionContent(option, index)"
                 :class="[{rightPadding: index !== 0}, [option.text.length > 0 ? 'stay' : '', 'ggobugi']]"
-                
                 :data-index="index"
+                :refs="'option-' + index"
                 style="margin-bottom: 10px;">
-                <!-- <i
-                  class="el-icon-error el-input__icon"
-                  slot="suffix"
-                  style="cursor: pointer;"
-                  @click="clearText($event, option)">
-                </i>
-                <i
-                  class="el-icon-delete el-input__icon"
-                  slot="suffix"
-                  style="cursor: pointer;"
-                  v-if="index === 0 ? false : true"
-                  @click="deleteOption(option)">
-                </i>
-                <template slot="append" v-if="showAddButton(option)">
+                <!-- <template slot="append" v-if="showAddButton(option)">
                   <el-button type="primary" icon="el-icon-circle-plus" circle @click="enterAndGo"></el-button>
                 </template> -->
               </input>
@@ -56,6 +43,7 @@
     </el-col>
   </span>
 </template>
+
 <style lang="scss" scoped>
   [data-title-questions] {
     position: relative;
@@ -146,11 +134,12 @@
           & ~ [data-options-box] {
             position: absolute;
             top: -31px;
-            left: 2%;
+            left: 1.9%;
             z-index: -1;
-            width: 95%;
+            width: 97%;
+            height: 78px;
+            border-radius: 2px;   
             background: steelblue;
-            height: 78px;   
           }
         }
 
@@ -165,11 +154,12 @@
           &:focus ~ [data-options-box] {
             position: absolute;
             top: -31px;
-            left: 2%;
+            left: 1.9%;
             z-index: -1;
-            width: 95%;
+            width: 97%;
+            height: 78px;
+            border-radius: 2px;
             background: steelblue;
-            height: 78px;   
           }
 
           &:focus {
@@ -211,6 +201,7 @@
     }
   }
 </style>
+
 <script>
 export default {
   props: {
@@ -229,7 +220,8 @@ export default {
         options: [],
       },
       optionContent: {},
-      optionData: ''
+      optionData: '',
+      deleteCount: false
     }
   },
   created() {
@@ -267,11 +259,11 @@ export default {
         }.bind(this), 100)
       }
     },
-    clearText(e, option) {
-      const input = e.currentTarget.offsetParent.previousElementSibling;
-      option.text = '';
-      input.focus();
-    },
+    // clearText(e, option) {
+    //   const input = e.currentTarget.offsetParent.previousElementSibling;
+    //   option.text = '';
+    //   input.focus();
+    // },
     deleteOption(targetOption) {
       const targetIndex = this.optionData.options.indexOf(targetOption);
       this.$delete(this.optionData.options, targetIndex);
@@ -280,6 +272,18 @@ export default {
       this.$emit('updateTitle', this.question);
     },
     updateOptionContent(option, index) {
+      if (event.key === 'Backspace' && option.text.length === 0) {
+        this.deleteCount = true;
+        if (this.deleteCount === true) {
+          index !== 0 ? this.deleteOption(option) : '';
+          
+          const previousInput = event.currentTarget.parentElement.previousSibling.children[0];
+          previousInput.focus();
+          
+          this.deleteCount = false;
+          return;
+        }
+      } 
       this.question.options[index] = option.text;
       this.$emit('updateOptions', this.question);
     }

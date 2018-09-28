@@ -13,13 +13,14 @@
         <p data-save>
           <el-row>
             <el-col :span="14" :offset="5">
-              <el-button type="primary" @click="saveQuestion()">등록하기</el-button>
+              <el-button type="default" @click="saveQuestion()">등록하기</el-button>
             </el-col>
           </el-row>
         </p>
       </el-form>        
   </div>
 </template>
+
 <style lang="scss" scoped>
   [data-type$="question"] {
     padding-bottom: 100px;
@@ -33,9 +34,8 @@
       }
     }
   }
-
-
 </style>
+
 <script>
 import api from '../services/api';
 import AddQuestionItems from '../components/AddQuestionItems.vue';
@@ -56,7 +56,7 @@ export default {
       this.questions.push(index);
     },
     async saveQuestion() {
-      debugger;
+      console.log(this.result);
       await api().post('', this.result);
       // this.$router.push('items');
     },
